@@ -31,12 +31,56 @@ def handle_hello():
     # this is how you can use the Family datastructure by calling its methods
     members = jackson_family.get_all_members()
     response_body = {
-        "hello": "world",
+        "hola": "omar",
         "family": members
     }
 
 
     return jsonify(response_body), 200
+
+@app.route('/member/<int:member_id>', methods=['GET'])
+def get_member(member_id):
+
+    # this is how you can use the Family datastructure by calling its methods
+    get_member = jackson_family.get_member(member_id)
+    #deleted_member = jackson_family.delete_member(id)
+    if get_member is not None:
+        response_body = {"message": "Member generate successfully", "family": get_member}
+        return jsonify(response_body), 200
+    else:
+        response_body = {"message": "Member not found"}
+        return jsonify(response_body), 404
+    
+@app.route('/member', methods=['POST'])
+def member():
+    request_body = request.json
+
+    member = {
+        "id": jackson_family._generateId(),
+        "first_name": request_body["first_name"],
+        "last_name": "Jackson",
+        "age": request_body["age"],
+        "lucky_numbers": request_body["lucky_numbers"]
+    }
+
+    jackson_family.add_member(member)
+
+    return jsonify({"message": "Member added successfully"}), 200
+
+@app.route('/members/<int:id>', methods=['DELETE'])
+def delete_member(id):
+
+    # this is how you can use the Family datastructure by calling its methods
+    deleted_member = jackson_family.delete_member(id)
+    if deleted_member is not None:
+        response_body = {"message": "Member deleted successfully", "family": deleted_member}
+        return jsonify(response_body), 200
+    else:
+        response_body = {"message": "Member not found"}
+        return jsonify(response_body), 404
+
+
+    
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
